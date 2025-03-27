@@ -15,7 +15,7 @@ export default function App() {
     }
     setLoading(true);
     try {
-      const response = await axios.post("https://repo-marketing.onrender.com", { role: jobRole });
+      const response = await axios.post("https://repo-marketing.onrender.com/generate", { role: jobRole });
       setJobDescription(response.data.description);
     } catch (error) {
       toast.error("Error generating job description.");
