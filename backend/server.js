@@ -4,29 +4,34 @@ import cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
-import pool from './database.js';
+import { neon } from "@neondatabase/serverless";
 
 const PORT = 5000;
  const app =express();
 app.use(express.json());
 app.use(cors()); 
 
-const insertQuery = `INSERT INTO JobRoles(Job_description) VALUES ($1)`
-
 app.post("/generate", async (req, res) => {
+  console.log('inside generate');
   const { role } = req.body;
   if (!role) {
     return res.status(400).json({ error: "Job role is required" });
   }
     try {
-      
-      const client = await pool.connect();
-      await client.query(insertQuery, [role]);
-      client.release();
+      console.log('on top of try');
+      console.log('printing process.env.DATABASE_URL', process.env.DATABASE_URL);
+      const insertQuery = `INSERT INTO JobRoles(Job_description) VALUES ($1)`
+      const sql = neon(process.env.DATABASE_URL);
+      const result = await sql`INSERT INTO jobroles(job_description) VALUES (${role})`;
+      // const client = await pool.connect();
+      // await client.query(insertQuery, [role]);
+       console.log(result);
+      //client.release();
+      console.log('after query');
     }
     catch (error) {
-      
-      res.status(500).json({ error: "server issue try again later" });
+      console.log(error);
+      //res.status(500).json({ error: "server issue try again later" });
 
      }
   
